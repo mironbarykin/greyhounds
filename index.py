@@ -1,6 +1,7 @@
 import discord
 import services
-import os
+import database
+from decouple import config
 
 GUILD_ID = 921654208082632725
 
@@ -22,16 +23,29 @@ async def command_test(interaction):
     await interaction.response.send_message(content='Бот поднят, все в порядке.')
 
 
-@client.tree.command(name='car', description='Взаимодействия с автопарком.', guild=discord.Object(id=GUILD_ID))
+@client.tree.command(name='car', description='Использование автопарка.', guild=discord.Object(id=GUILD_ID))
 @discord.app_commands.choices(car=CAR_CHOICES)
-async def command_car(interaction,
-                      car: discord.app_commands.Choice[str],
-                      comment: str = None):
+async def command_car(interaction, car: discord.app_commands.Choice[str], comment: str = None):
 
     report = services.Report(author=interaction.user, vehicle=car, comment=comment)
-    await interaction.response.send_message(content=f'{services.get_current_time()}',
-                                            embed=report.generate_embed(),
-                                            view=services.ReportView())
+
+    await interaction.response.send_message(content=f'{car.name}', embed=report.generate_embed(), view=services.ReportView())
+
+
+@client.tree.command(name='cars', description='Статус автопарка.', guild=discord.Object(id=GUILD_ID))
+async def command_cars(interaction):
+
+    await interaction.response.send_message(content='', embed=services.generate_statuses_embed())
+
+
+@client.tree.command(name='car_add', description='Обновление автопарка.', guild=discord.Object(id=GUILD_ID))
+async def command_cars(interaction, name: str):
+    try:
+        database.add_new_car(name)
+        await interaction.response.send_message(content=f'Автомобиль {name}, **успешно** добавлен в ваш автопарк.')
+    except Exception as error:
+        await interaction.response.send_message(content=f'Новый автомобиль **не удалось** добавить в ваш автопарк. '
+                                                        f'\n {error}')
 
 
 @client.event
@@ -39,4 +53,4 @@ async def on_ready():
     await client.tree.sync(guild=discord.Object(id=GUILD_ID))
     print('The bot is ready to serve!')
 
-client.run(os.getenv('DISCORD_BOT_TOKEN'))
+client.run(config('DISCORD_BOT_TOKEN'))

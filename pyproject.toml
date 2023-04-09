@@ -10,7 +10,8 @@ python = "^3.11"
 discord = "^2.2.2"
 uuid = "^1.30"
 datetime = "^5.1"
-mysql-connector = "^2.2.9"
+mysql-connector-python = "^8.0.32"
+python-decouple = "^3.8"
 
 
 [build-system]
