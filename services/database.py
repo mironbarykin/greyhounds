@@ -3,9 +3,14 @@ from decouple import config
 
 
 class Connection:
-    def __init__(self):
+    def __init__(self, closed: bool = True):
+        """
+        Opens the database connection and creates cursor, If close flag is active, connection will be closed after usage.
+        :param closed: bool
+        """
         self.db = mysql.connector.connect(host=config('DB_HOST'), user=config('DB_USERNAME'), passwd=config('DB_PASSWORD'), database=config('DB_DATABASE'))
         self.cursor = self.db.cursor()
+        self.closed = closed
 
     def insert(self, table: str, arguments: dict):
         """
@@ -16,6 +21,9 @@ class Connection:
         """
         self.cursor.execute(f"""INSERT INTO {table} ({", ".join([f'{argument}' for argument in arguments])}) VALUES ({", ".join([f"'{arguments[argument]}'" for argument in arguments])})""")
         self.db.commit()
+
+        if self.closed:
+            self.close()
 
     def update(self, table: str, arguments: dict, conditions: dict):
         """
@@ -28,6 +36,9 @@ class Connection:
         self.cursor.execute(f"""UPDATE {table} SET {",".join([f"{argument} = '{arguments[argument]}'" for argument in arguments])} WHERE {" AND ".join([f"{condition} = '{conditions[condition]}'" for condition in conditions])}""")
         self.db.commit()
 
+        if self.closed:
+            self.close()
+
     def get(self, table: str):
         """
         Get all data from table.
@@ -35,7 +46,12 @@ class Connection:
         :return: tuple
         """
         self.cursor.execute(f"""SELECT * FROM {table}""")
-        return self.cursor.fetchall()
+
+        response = self.cursor.fetchall()
+        if self.closed:
+            self.close()
+
+        return response
 
     def close(self):
         self.cursor.close()
