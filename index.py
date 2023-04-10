@@ -1,11 +1,12 @@
 import discord
 import service
+import services
 import database
 from decouple import config
 
 TARGET_GUILD = discord.Object(id=config('GUILD_ID'))
 
-client = service.Client()
+client = services.Client()
 
 
 @client.tree.command(name='car', description='Использование автопарка.', guild=TARGET_GUILD)
@@ -14,7 +15,9 @@ async def command_car(interaction, car: discord.app_commands.Choice[str], commen
 
     report = service.Report(author=interaction.user, vehicle=car, comment=comment)
 
-    await interaction.response.send_message(content=f'{car.name}', embed=report.generate_embed(), view=service.ReportView())
+    await interaction.response.send_message(content=f'{car.name}',
+                                            embed=report.generate_embed(),
+                                            view=services.CarsReportView())
 
 
 @client.tree.command(name='cars', description='Статус автопарка.', guild=TARGET_GUILD)
