@@ -12,12 +12,13 @@ class CarsTakingReportView(discord.ui.View):
 
     @discord.ui.button(label='Вернуть', style=discord.ButtonStyle.blurple, custom_id='0')
     async def callback(self, interaction, button):
-        Connection().update(table='cars', arguments={'status': '0'}, conditions={'name': interaction.message.content})
-
-        embed = interaction.message.embeds[0]
-        embed.set_footer(text=f'{embed.footer.text} - {Time().str()}')
-
-        await interaction.response.edit_message(embed=embed, view=None)
+        if str(interaction.user.id) == Connection().get(['status'], 'cars', {'name': interaction.message.content})[0][0]:
+            Connection().update(table='cars', arguments={'status': '0'}, conditions={'name': interaction.message.content})
+            embed = interaction.message.embeds[0]
+            embed.set_footer(text=f'{embed.footer.text} - {Time().str()}')
+            await interaction.response.edit_message(embed=embed, view=None)
+        else:
+            await interaction.response.send_message(content=f'<@{interaction.user.id}>, Вы пытаетесь изменить отчет оставленный не вами!')
 
 
 class UpdatableStatusReportView(discord.ui.View):
@@ -64,7 +65,7 @@ class StatusReport(Report):
     def __init__(self, author):
         super().__init__(author=author)
         self.fields = [(':card_box:', 'Статус автомобилей.', '')]
-        for car in Connection().get('cars'):
+        for car in Connection().get(['*'], 'cars', dict()):
             field = ['', '', '']
             field[1] = car[0]
             if car[1] == '0':

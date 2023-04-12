@@ -1,5 +1,5 @@
-import mysql.connector
 import os
+import mysql.connector
 
 
 class Connection:
@@ -39,18 +39,23 @@ class Connection:
         if self.closed:
             self.close()
 
-    def get(self, table: str):
+    def get(self, arguments: list, table: str, conditions: dict):
         """
-        Get all data from table.
+        Gets arguments from table under conditions.
+        :param arguments: list
         :param table: str
+        :param conditions: dict
         :return: tuple
         """
-        self.cursor.execute(f"""SELECT * FROM {table}""")
+        where_query = ''
+        if conditions:
+            where_query = f"""WHERE {' AND '.join([f"{condition} = '{conditions[condition]}'" for condition in conditions])}"""
+        self.cursor.execute(f"""SELECT {",".join(arguments)} FROM {table} {where_query}""")
 
         response = self.cursor.fetchall()
         if self.closed:
             self.close()
-
+        
         return response
 
     def close(self):
