@@ -8,13 +8,22 @@ class CarsTakingReportView(discord.ui.View):
         super().__init__(timeout=None)
 
     @discord.ui.button(label='Вернуть', style=discord.ButtonStyle.blurple, custom_id='0')
-    async def get_back(self, interaction, button):
+    async def callback(self, interaction, button):
         Connection().update(table='cars', arguments={'status': '0'}, conditions={'name': interaction.message.content})
 
         embed = interaction.message.embeds[0]
         embed.set_footer(text=f'{embed.footer.text} - {Time().str()}')
 
         await interaction.response.edit_message(embed=embed, view=None)
+
+
+class UpdatableStatusReportView(discord.ui.View):
+    def __init__(self):
+        super().__init__(timeout=None)
+
+    @discord.ui.button(label='Обновить', style=discord.ButtonStyle.blurple, custom_id='1')
+    async def callback(self, interaction, button):
+        await interaction.response.edit_message(**StatusReport(author=interaction.user).response())
 
 
 class TakingReport(Report):
@@ -30,7 +39,7 @@ class TakingReport(Report):
         if comment is not None:
             self.fields.append((':pencil2:', '**Комментарий**', comment))
 
-        Connection().update('cars', {'status': author.id}, {'name': self.car})
+        Connection().update('cars', {'status': author.id, 'timestamp': Time().timestamp()}, {'name': self.car})
 
     def embed(self):
         return self.generate_embed(fields=self.fields)
@@ -42,7 +51,6 @@ class TakingReport(Report):
 class StatusReport(Report):
     def __init__(self, author):
         super().__init__(author=author)
-
         self.fields = [(':card_box:', 'Статус автомобилей.', '')]
         for car in Connection().get('cars'):
             field = ['', '', '']

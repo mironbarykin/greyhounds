@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "greyhounds"
-version = "0.1.0"
+version = "0.1.2"
 description = ""
 authors = ["Miron Barykin <barykinmiron@gmail.com>"]
 readme = "README.md"
@@ -12,6 +12,7 @@ uuid = "^1.30"
 datetime = "^5.1"
 mysql-connector-python = "^8.0.32"
 python-decouple = "^3.8"
+asyncio = "^3.4.3"
 
 
 [build-system]

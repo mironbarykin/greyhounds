@@ -12,6 +12,7 @@ class Client(commands.Bot):
 
     async def setup_hook(self) -> None:
         self.add_view(services.cars.CarsTakingReportView())
+        self.add_view(services.cars.UpdatableStatusReportView())
 
 
 class Time:
@@ -20,6 +21,9 @@ class Time:
 
     def str(self):
         return self.datetime.strftime('%H:%M:%S')
+
+    def timestamp(self):
+        return self.datetime.strftime('%Y-%m-%d %H:%M:%S')
 
 
 class Report:

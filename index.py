@@ -3,7 +3,7 @@ from decouple import config
 
 import services
 
-TARGET_GUILD = discord.Object(id=config('GUILD_ID'))
+TARGET_GUILD = discord.Object(id=config('TEST_GUILD_ID'))
 CARS = services.database.Connection().get('cars')
 CAR_CHOICES = [discord.app_commands.Choice(name=f'{CARS[car][0]}', value=f'{car}') for car in range(len(CARS))]
 client = services.general.Client()
@@ -17,8 +17,12 @@ async def command_car(interaction, car: discord.app_commands.Choice[str], commen
 
 
 @client.tree.command(name='cars', description='Статус машин.', guild=TARGET_GUILD)
-async def command_cars(interaction):
+async def command_cars(interaction, is_updatable: bool = False, is_static: bool = False):
     response = services.cars.StatusReport(interaction.user).response()
+    if is_updatable:
+        response['view'] = services.cars.UpdatableStatusReportView()
+    if not is_static:
+        response['delete_after'] = 10
     await interaction.response.send_message(**response)
 
 
@@ -31,4 +35,4 @@ async def on_ready():
 async def synchronisation():
     await client.tree.sync(guild=TARGET_GUILD)
 
-client.run(config('DISCORD_BOT_TOKEN'))
+client.run(config('TEST_DISCORD_BOT_TOKEN'))
