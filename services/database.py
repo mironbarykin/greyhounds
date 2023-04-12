@@ -1,5 +1,5 @@
 import mysql.connector
-from decouple import config
+import os
 
 
 class Connection:
@@ -8,7 +8,7 @@ class Connection:
         Opens the database connection and creates cursor, If close flag is active, connection will be closed after usage.
         :param closed: bool
         """
-        self.db = mysql.connector.connect(host=config('TEST_DB_HOST'), user=config('TEST_DB_USERNAME'), passwd=config('TEST_DB_PASSWORD'), database=config('TEST_DB_DATABASE'))
+        self.db = mysql.connector.connect(host=os.getenv('TEST_DB_HOST'), user=os.getenv('TEST_DB_USERNAME'), passwd=os.getenv('TEST_DB_PASSWORD'), database=os.getenv('TEST_DB_DATABASE'))
         self.cursor = self.db.cursor()
         self.closed = closed
 

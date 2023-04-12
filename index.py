@@ -1,9 +1,9 @@
 import discord
-from decouple import config
+import os
 
 import services
 
-TARGET_GUILD = discord.Object(id=config('TEST_GUILD_ID'))
+TARGET_GUILD = discord.Object(id=os.getenv('TEST_GUILD_ID'))
 CARS = services.database.Connection().get('cars')
 CAR_CHOICES = [discord.app_commands.Choice(name=f'{CARS[car][0]}', value=f'{car}') for car in range(len(CARS))]
 client = services.general.Client()
@@ -35,4 +35,4 @@ async def on_ready():
 async def synchronisation():
     await client.tree.sync(guild=TARGET_GUILD)
 
-client.run(config('TEST_DISCORD_BOT_TOKEN'))
+client.run(os.getenv('TEST_DISCORD_BOT_TOKEN'))
