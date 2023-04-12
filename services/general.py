@@ -1,5 +1,5 @@
-import discord
 import datetime
+import discord
 import uuid
 from discord.ext import commands
 
@@ -20,9 +20,17 @@ class Time:
         self.datetime = datetime.datetime.now(datetime.timezone(datetime.timedelta(hours=3)))
 
     def str(self):
+        """
+        Function creating a string for the order response.
+        :return: str
+        """
         return self.datetime.strftime('%H:%M:%S')
 
     def timestamp(self):
+        """
+        Function creating a string for the database datetime entry.
+        :return: str
+        """
         return self.datetime.strftime('%Y-%m-%d %H:%M:%S')
 
 
@@ -33,7 +41,7 @@ class Report:
 
     def generate_embed(self, fields: list):
         """
-        Generated embed for this report with specified fields. Fields[0] is heading.
+        Generates embed for this report with specified fields. Fields[0] is heading.
         :param fields: list[tuple(emoji, name, value)]
         :return: discord.Embed
         """

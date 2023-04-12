@@ -4,6 +4,9 @@ from services.general import Time, Report
 
 
 class CarsTakingReportView(discord.ui.View):
+    """
+    A class representing the view of car's taking report.
+    """
     def __init__(self):
         super().__init__(timeout=None)
 
@@ -18,6 +21,9 @@ class CarsTakingReportView(discord.ui.View):
 
 
 class UpdatableStatusReportView(discord.ui.View):
+    """
+    A class representing the view of updatable status view. 
+    """
     def __init__(self):
         super().__init__(timeout=None)
 
@@ -27,6 +33,9 @@ class UpdatableStatusReportView(discord.ui.View):
 
 
 class TakingReport(Report):
+    """
+    A class representing the car's taking report.
+    """
     def __init__(self, author, car, comment):
         super().__init__(author=author)
 
@@ -49,6 +58,9 @@ class TakingReport(Report):
 
 
 class StatusReport(Report):
+    """
+    A class representing the status report.
+    """
     def __init__(self, author):
         super().__init__(author=author)
         self.fields = [(':card_box:', 'Статус автомобилей.', '')]
