@@ -5,8 +5,7 @@ import services
 
 TARGET_GUILD = discord.Object(id=os.getenv('TEST_GUILD_ID'))
 CARS = services.database.Connection().get(['name'], 'cars', dict())
-CAR_CHOICES = [discord.app_commands.Choice(name=f'{CARS[car][0]}', value=f'{car}')
-               for car in range(len(CARS))]
+CAR_CHOICES = [discord.app_commands.Choice(name=f'{CARS[car][0]}', value=f'{car}') for car in range(len(CARS))]
 client = services.general.Client()
 
 

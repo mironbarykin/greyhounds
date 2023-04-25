@@ -12,7 +12,9 @@ class CarsTakingReportView(discord.ui.View):
 
     @discord.ui.button(label='Вернуть', style=discord.ButtonStyle.blurple, custom_id='0')
     async def callback(self, interaction, button):
-        if str(interaction.user.id) == Connection().get(['status'], 'cars', {'name': interaction.message.content})[0][0]:
+        is_author = str(interaction.user.id) == Connection().get(['status'], 'cars', {'name': interaction.message.content})[0][0]
+        is_admin = discord.utils.get(interaction.guild.roles, name="Волан Де Морты") in interaction.user.roles
+        if is_author or is_admin:
             Connection().update(table='cars', arguments={'status': '0'}, conditions={'name': interaction.message.content})
             embed = interaction.message.embeds[0]
             embed.set_footer(text=f'{embed.footer.text} - {Time().str()}')
